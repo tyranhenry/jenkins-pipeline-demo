@@ -1,9 +1,9 @@
 pipeline {
   environment {
-    registry = 'registry.gitlab.com'
-    registryCredential = 'gitlab-registry'
-    repository = 'pvn_jenkins_wednesday/jenkins-demo'
-    imageLine = 'registry.gitlab.com/pvn_jenkins_wednesday/jenkins-demo:latest'
+    registry = 'docker.io'
+    registryCredential = 'docker-hub'
+    repository = 'pvnovarese/jenkins-demo'
+    imageLine = 'docker.io/pvnovarese/jenkins-demo:latest'
   }
   agent any
   stages {
