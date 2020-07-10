@@ -1,9 +1,9 @@
 pipeline {
   environment {
-    registry = 'docker.io'
+    registry = 'registry.hub.docker.com'
     registryCredential = 'docker-hub'
     repository = 'pvnovarese/jenkins-demo'
-    imageLine = 'docker.io/pvnovarese/jenkins-demo:latest'
+    imageLine = 'pvnovarese/jenkins-demo:latest'
   }
   agent any
   stages {
