@@ -3,7 +3,7 @@ pipeline {
     registry = 'registry.hub.docker.com'
     registryCredential = 'docker-hub'
     repository = 'pvnovarese/jenkins-demo'
-    imageLine = 'pvnovarese/jenkins-demo:latest Dockerfile'
+    imageLine = 'pvnovarese/jenkins-demo:latest'
   }
   agent any
   stages {
