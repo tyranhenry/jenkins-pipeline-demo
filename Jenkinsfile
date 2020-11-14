@@ -23,7 +23,7 @@ pipeline {
         sh 'docker --version'
         script {
           docker.withRegistry('https://' + registry, registryCredential) {
-            def image = docker.build(repository + ':${env.BUILD_ID}')
+            def image = docker.build(repository + ":${env.BUILD_ID}")
             image.push()
           }
         }
