@@ -7,7 +7,7 @@ pipeline {
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
     repository = 'pvnovarese/jenkins-demo'
-    imageLine = 'pvnovarese/jenkins-demo:${env.BUILD_ID} Dockerfile'
+    imageLine = "pvnovarese/jenkins-demo:${env.BUILD_ID} Dockerfile"
   }
   agent any
   stages {
