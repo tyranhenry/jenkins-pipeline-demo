@@ -2,8 +2,8 @@
 
 pipeline {
   environment {
-    // don't think registry is required if we're using docker hub
-    registry = 'registry.hub.docker.com'
+    // "registry" isn't required if we're using docker hub, I'm leaving it here in case you want to use a different registry
+    // registry = 'registry.hub.docker.com'
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
@@ -19,8 +19,6 @@ pipeline {
     }
     stage('Build image and push to registry') {
       steps {
-        // docker --version just for a sanity check that everything is running
-        sh 'docker --version'
         script {
           dockerImage = docker.build repository + ":${BUILD_NUMBER}"
           docker.withRegistry( '', registryCredential ) { 
@@ -33,20 +31,21 @@ pipeline {
       steps {
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images', forceAnalyze: 'true', engineRetries: '900'
+        // forceAnalyze is required since we're passing a Dockerfile with the image
       }
     }
     stage('Re-tag as prod and push stable image to registry') {
       steps {
-        //manual retagging isn't necessary since we just pass "prod" to dockerImage.push
-        //sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
         script {
           docker.withRegistry('', registryCredential) {
-            dockerImage.push('prod')
+            dockerImage.push('prod') 
+            // dockerImage.push takes the argument as a new tag for the image before pushing
           }
         }
       }
     }
     stage('Clean up') {
+      // if we succuessfully pushed the :prod tag than we don't need the $BUILD_ID tag anymore
       steps {
         sh 'docker rmi $repository:${BUILD_NUMBER}'
       }
