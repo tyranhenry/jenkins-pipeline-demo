@@ -35,19 +35,21 @@ pipeline {
       }
     }
     stage('Build and push stable image to registry') {
-      // steps {
+      steps {
         sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
-        image = docker.image(repository + ":prod")
-        docker.withRegistry('', registryCredential) {
-          image.push()
-        }        
+        script {
+          //image = docker.image(repository + ":prod")
+          docker.withRegistry('', registryCredential) {
+            dockerImage.push(repository + ":prod")
+          }
+        }
         // script {
           // docker.withRegistry('https://' + registry, registryCredential) {
             // def image = docker.build(repository + ':prod')
             // image.push()  
           // }
         // }
-      //}
+      }
     }
   }
 }
