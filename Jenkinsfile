@@ -26,7 +26,7 @@ pipeline {
     stage('Analyze with Anchore plugin') {
       steps {
         writeFile file: 'anchore_images', text: imageLine
-        anchore name: 'anchore_images'
+        anchore name: 'anchore_images', engineRetries: '600'
       }
     }
     stage('Build and push stable image to registry') {
