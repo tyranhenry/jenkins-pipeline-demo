@@ -36,7 +36,11 @@ pipeline {
     }
     stage('Build and push stable image to registry') {
       steps {
-        sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod" 
+        sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
+        image = docker.image(repository + ":prod")
+        docker.withRegistry('', registryCredential) {
+          image.push()
+        }        
         // script {
           // docker.withRegistry('https://' + registry, registryCredential) {
             // def image = docker.build(repository + ':prod')
