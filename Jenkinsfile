@@ -14,19 +14,20 @@ pipeline {
     stage('Checkout SCM') {
       steps {
         checkout scm
-        writeFile file: 'anchore_images', text: imageLine
       }
     }
     stage('Build image and push to registry') {
       steps {
         // docker --version just for a sanity check that everything is running
         sh 'docker --version'
-        script {
-          docker.withRegistry('https://' + registry, registryCredential) {
-            def image = docker.build(repository + ":${env.BUILD_ID}")
-            image.push()
-          }
-        }
+        docker.build(repository + ":${env.BUILD_ID}")
+        customImage.push()
+        // script {
+          // docker.withRegistry('https://' + registry, registryCredential) {
+            // def image = docker.build(repository + ":${env.BUILD_ID}")
+            // image.push()
+          // }
+        // }
       }
     }
     stage('Analyze with Anchore plugin') {
