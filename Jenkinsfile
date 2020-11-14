@@ -46,5 +46,10 @@ pipeline {
         }
       }
     }
+    stage('Clean up') {
+      steps {
+        sh 'docker rmi $repository:${BUILD_NUMBER}'
+      }
+    }
   }
 }
