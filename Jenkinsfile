@@ -14,6 +14,7 @@ pipeline {
     stage('Checkout SCM') {
       steps {
         checkout scm
+        writeFile file: 'anchore_images', text: imageLine
       }
     }
     stage('Build image and push to registry') {
