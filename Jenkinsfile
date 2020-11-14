@@ -2,7 +2,7 @@
 
 pipeline {
   environment {
-    registry = 'registry.hub.docker.com'
+    registry = 'docker.io'
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
