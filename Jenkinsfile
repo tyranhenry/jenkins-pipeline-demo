@@ -21,8 +21,12 @@ pipeline {
         // docker --version just for a sanity check that everything is running
         sh 'docker --version'
         script {
-          docker.build(repository + ":${env.BUILD_ID}")
-          customImage.push()
+          dockerImage = docker.build repository + ":$BUILD_NUMBER"
+          // docker.build(repository + ":${env.BUILD_ID}")
+          // customImage.push()
+          docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
           // docker.withRegistry('https://' + registry, registryCredential) {
             // def image = docker.build(repository + ":${env.BUILD_ID}")
             // image.push()
