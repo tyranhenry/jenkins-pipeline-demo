@@ -2,6 +2,7 @@
 
 pipeline {
   environment {
+    // don't think registry is required if we're using docker hub
     registry = 'registry.hub.docker.com'
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     registryCredential = 'docker-hub'
@@ -34,21 +35,15 @@ pipeline {
         anchore name: 'anchore_images', forceAnalyze: 'true', engineRetries: '900'
       }
     }
-    stage('Build and push stable image to registry') {
+    stage('Re-tag as prod and push stable image to registry') {
       steps {
+        //manual retagging isn't necessary since we just pass "prod" to dockerImage.push
         //sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
         script {
-          //image = docker.image(repository + ":prod")
           docker.withRegistry('', registryCredential) {
             dockerImage.push('prod')
           }
         }
-        // script {
-          // docker.withRegistry('https://' + registry, registryCredential) {
-            // def image = docker.build(repository + ':prod')
-            // image.push()  
-          // }
-        // }
       }
     }
   }
