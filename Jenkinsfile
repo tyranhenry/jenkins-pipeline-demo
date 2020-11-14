@@ -7,7 +7,7 @@ pipeline {
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
     repository = 'pvnovarese/jenkins-demo'
-    imageLine = "pvnovarese/jenkins-demo:${env.BUILD_ID} Dockerfile"
+    imageLine = "pvnovarese/jenkins-demo:${BUILD_NUMBER} Dockerfile"
   }
   agent any
   stages {
@@ -21,17 +21,10 @@ pipeline {
         // docker --version just for a sanity check that everything is running
         sh 'docker --version'
         script {
-          // dockerImage = docker.build repository + ":$BUILD_NUMBER"
           dockerImage = docker.build repository + ":${BUILD_NUMBER}"
-          // docker.build(repository + ":${env.BUILD_ID}")
-          // customImage.push()
           docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
-                    }
-          // docker.withRegistry('https://' + registry, registryCredential) {
-            // def image = docker.build(repository + ":${env.BUILD_ID}")
-            // image.push()
-          // }
+            dockerImage.push() 
+          }
         }
       }
     }
@@ -43,12 +36,13 @@ pipeline {
     }
     stage('Build and push stable image to registry') {
       steps {
-        script {
-          docker.withRegistry('https://' + registry, registryCredential) {
-            def image = docker.build(repository + ':prod')
-            image.push()  
-          }
-        }
+        sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod" 
+        // script {
+          // docker.withRegistry('https://' + registry, registryCredential) {
+            // def image = docker.build(repository + ':prod')
+            // image.push()  
+          // }
+        // }
       }
     }
   }
