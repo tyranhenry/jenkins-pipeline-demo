@@ -25,6 +25,7 @@ pipeline {
     }
     stage('Analyze with Anchore plugin') {
       steps {
+        sh 'docker --version'
         writeFile file: 'anchore_images', text: imageLine
         anchore name: 'anchore_images'
       }
