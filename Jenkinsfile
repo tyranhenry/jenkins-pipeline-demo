@@ -7,8 +7,8 @@ pipeline {
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
-    repository = 'pvnovarese/jenkins-demo'
-    imageLine = "pvnovarese/jenkins-demo:${BUILD_NUMBER} Dockerfile"
+    repository = 'pvnovarese/jenkins-pipeline-demo'
+    imageLine = "pvnovarese/jenkins-pipeline-demo:${BUILD_NUMBER} Dockerfile"
   }
   agent any
   stages {
