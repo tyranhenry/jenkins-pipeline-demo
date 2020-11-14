@@ -2,12 +2,12 @@
 
 pipeline {
   environment {
-    registry = 'docker.io'
+    registry = 'registry.hub.docker.com'
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     registryCredential = 'docker-hub'
     // change this repository and imageLine to your DockerID
     repository = 'pvnovarese/jenkins-demo'
-    imageLine = 'pvnovarese/jenkins-demo:latest Dockerfile'
+    imageLine = 'pvnovarese/jenkins-demo:${env.BUILD_ID} Dockerfile'
   }
   agent any
   stages {
@@ -22,7 +22,7 @@ pipeline {
         sh 'docker --version'
         script {
           docker.withRegistry('https://' + registry, registryCredential) {
-            def image = docker.build(repository)
+            def image = docker.build(repository + ':${env.BUILD_ID}')
             image.push()
           }
         }
