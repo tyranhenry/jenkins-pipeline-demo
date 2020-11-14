@@ -20,14 +20,14 @@ pipeline {
       steps {
         // docker --version just for a sanity check that everything is running
         sh 'docker --version'
-        docker.build(repository + ":${env.BUILD_ID}")
-        customImage.push()
-        // script {
+        script {
+          docker.build(repository + ":${env.BUILD_ID}")
+          customImage.push()
           // docker.withRegistry('https://' + registry, registryCredential) {
             // def image = docker.build(repository + ":${env.BUILD_ID}")
             // image.push()
           // }
-        // }
+        }
       }
     }
     stage('Analyze with Anchore plugin') {
