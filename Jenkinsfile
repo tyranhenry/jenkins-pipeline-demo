@@ -36,11 +36,11 @@ pipeline {
     }
     stage('Build and push stable image to registry') {
       steps {
-        sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
+        //sh 'docker tag ' + repository + ":${BUILD_NUMBER} " + repository + ":prod"
         script {
           //image = docker.image(repository + ":prod")
           docker.withRegistry('', registryCredential) {
-            dockerImage.push(repository + ":prod")
+            dockerImage.push('prod')
           }
         }
         // script {
