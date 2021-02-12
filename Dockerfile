@@ -9,6 +9,6 @@ FROM debian:stable
 
 # BAD dockerfile
 EXPOSE 22
-RUN apk add curl
+#RUN apk add curl
 
 CMD /bin/sh
