@@ -1,5 +1,5 @@
-#FROM alpine:latest
-FROM debian:stable
+FROM alpine:latest
+#FROM debian:stable
 
 # GOOD dockerfile
 # EXPOSE 9999
@@ -9,6 +9,6 @@ FROM debian:stable
 
 # BAD dockerfile
 EXPOSE 22
-#RUN apk add curl
+RUN apk add curl
 
 CMD /bin/sh
