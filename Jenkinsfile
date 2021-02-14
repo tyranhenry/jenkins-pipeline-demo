@@ -2,13 +2,14 @@
 
 pipeline {
   environment {
-    // "registry" isn't required if we're using docker hub, I'm leaving it here in case you want to use a different registry
-    // registry = 'registry.hub.docker.com'
+    // "REGISTRY" isn't required if we're using docker hub, I'm leaving it here in case you want to use a different registry
+    // REGISTRY = 'registry.hub.docker.com'
     // you need a credential named 'docker-hub' with your DockerID/password to push images
-    registryCredential = 'docker-hub'
-    // change this repository and imageLine to your DockerID
-    repository = 'pvnovarese/jenkins-pipeline-demo'
-    imageLine = "pvnovarese/jenkins-pipeline-demo:${BUILD_NUMBER} Dockerfile"
+    CREDENTIAL = "docker-hub"
+    DOCKER_HUB = credentials("$CREDENTIAL")
+    REPOSITORY = "${DOCKER_HUB_USR}/jenkins-plugin-bug"
+    TAG = ":testcase1-${BUILD_NUMBER}"
+    IMAGELINE = "${REPOSITORY}${TAG} Dockerfile"
   }
   agent any
   stages {
@@ -20,8 +21,8 @@ pipeline {
     stage('Build image and push to registry') {
       steps {
         script {
-          dockerImage = docker.build repository + ":${BUILD_NUMBER}"
-          docker.withRegistry( '', registryCredential ) { 
+          dockerImage = docker.build REPOSITORY + TAG
+          docker.withRegistry( '', CREDENTIAL ) { 
             dockerImage.push() 
           }
         }
@@ -29,15 +30,23 @@ pipeline {
     }
     stage('Analyze with Anchore plugin') {
       steps {
-        writeFile file: 'anchore_images', text: imageLine
-        anchore name: 'anchore_images', forceAnalyze: 'true', engineRetries: '900'
-        // forceAnalyze is required since we're passing a Dockerfile with the image
+        writeFile file: 'anchore_images', text: IMAGELINE
+        script {
+          try {
+            // forceAnalyze is a good idea since we're passing a Dockerfile with the image
+            anchore name: 'anchore_images', forceAnalyze: 'true', engineRetries: '900'
+          } catch (err) {
+            // if scan fails, clean up (delete the image) and fail the build
+            sh 'docker rmi ${REPOSITORY}${TAG}'
+            sh 'exit 1'
+          }  
+        }
       }
     }
     stage('Re-tag as prod and push stable image to registry') {
       steps {
         script {
-          docker.withRegistry('', registryCredential) {
+          docker.withRegistry('', CREDENTIAL) {
             dockerImage.push('prod') 
             // dockerImage.push takes the argument as a new tag for the image before pushing
           }
@@ -47,7 +56,7 @@ pipeline {
     stage('Clean up') {
       // if we succuessfully pushed the :prod tag than we don't need the $BUILD_ID tag anymore
       steps {
-        sh 'docker rmi $repository:${BUILD_NUMBER}'
+        sh 'docker rmi ${REPOSITORY}${TAG} ${REPOSITORY}:prod'
       }
     }
   }
