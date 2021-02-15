@@ -7,8 +7,8 @@ pipeline {
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     CREDENTIAL = "docker-hub"
     DOCKER_HUB = credentials("$CREDENTIAL")
-    REPOSITORY = "${DOCKER_HUB_USR}/jenkins-plugin-bug"
-    TAG = ":testcase1-${BUILD_NUMBER}"
+    REPOSITORY = "${DOCKER_HUB_USR}/anchore-jenkins-pipeline-demo"
+    TAG = ":devbuild-${BUILD_NUMBER}"
     IMAGELINE = "${REPOSITORY}${TAG} Dockerfile"
   }
   agent any
