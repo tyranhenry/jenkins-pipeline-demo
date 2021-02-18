@@ -10,14 +10,14 @@ pipeline {
     REPOSITORY = "${DOCKER_HUB_USR}/anchore-jenkins-pipeline-demo"
     TAG = ":devbuild-${BUILD_NUMBER}"
     IMAGELINE = "${REPOSITORY}${TAG} Dockerfile"
-  }
+  } // end environment 
   agent any
   stages {
     stage('Checkout SCM') {
       steps {
         checkout scm
-      }
-    }
+      } // end steps
+    } // end stage "checkout scm"
     stage('Build image and push to registry') {
       steps {
         script {
@@ -25,9 +25,9 @@ pipeline {
           docker.withRegistry( '', CREDENTIAL ) { 
             dockerImage.push() 
           }
-        }
-      }
-    }
+        } // end script
+      } // end steps
+    } // end stage "build image and push to registry"
     stage('Analyze with Anchore plugin') {
       steps {
         writeFile file: 'anchore_images', text: IMAGELINE
@@ -39,10 +39,10 @@ pipeline {
             // if scan fails, clean up (delete the image) and fail the build
             sh 'docker rmi ${REPOSITORY}${TAG}'
             sh 'exit 1'
-          }  
-        }
-      }
-    }
+          } // end try
+        } // end script 
+      } // end steps
+    } // end stage "analyze with anchore plugin"
     stage('Re-tag as prod and push stable image to registry') {
       steps {
         script {
@@ -50,14 +50,14 @@ pipeline {
             dockerImage.push('prod') 
             // dockerImage.push takes the argument as a new tag for the image before pushing
           }
-        }
-      }
-    }
+        } // end script 
+      } // end steps
+    } // end stage "retag as prod"
     stage('Clean up') {
       // if we succuessfully pushed the :prod tag than we don't need the $BUILD_ID tag anymore
       steps {
         sh 'docker rmi ${REPOSITORY}${TAG} ${REPOSITORY}:prod'
-      }
-    }
-  }
-}
+      } // end steps
+    } // end stage "clean up"
+  } // end stages
+} // end pipeline 
