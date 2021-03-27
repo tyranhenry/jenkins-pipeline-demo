@@ -1,5 +1,4 @@
 FROM alpine:latest
-#FROM debian:stable
 
 # GOOD dockerfile
 #EXPOSE 9999
