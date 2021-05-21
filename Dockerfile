@@ -18,5 +18,5 @@ RUN echo "aws_access_key_id=01234567890123456789" > /aws_key && \
     echo "--BEGIN PRIVATE KEY--" > /private_key && \
     echo "auth: \\"something\\"" > /docker_auth && \
     echo "api-key=00000000000000000000000" > /api_key
-
+ADD file:1a1eae7a82c66d673971436ce2605e97d107e2934b7cdec876c64923ae6f4f85 in / 
 CMD /bin/sh
